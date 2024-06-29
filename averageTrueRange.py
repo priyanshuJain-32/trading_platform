@@ -5,7 +5,7 @@ Created on Sat Jun 29 14:01:25 2024
 
 @author: priyanshu
 
-ATR: focuses on price movement and conveys how wildly he market is swinging.
+Average True Range: focuses on price movement and conveys how wildly he market is swinging.
 The value of ATR shows the fluctuation in value of stock. For eg if value is 10 for a 
 US stock then the stock will vary by $10 in that time period.
 
@@ -20,10 +20,22 @@ we consider that it is infact increasing.
 """
 
 def atr(DF, window = 14):
-    df = DF.copy()
-    df["H-L"] = df["High"] - df["Low"]
-    df["H-PC"] = df["High"] - df["Adj Close"].shift(1)
-    df["L-PC"] = df["Low"] - df["Adj Close"].shift(1)
-    df["TR"] = df[["H-L","H-PC","L-PC"]].max(axis=1,skipna=False)
-    df["ATR"] = df["TR"].ewm(com=window, min_periods = window).mean()
-    return df["ATR"]
+    df = DF.copy() # create copy of original Database
+    
+    
+    df["H-L"] = df["High"] - df["Low"] # calculate diff of high and low
+    
+    
+    df["H-PC"] = df["High"] - df["Adj Close"].shift(1) # calculate diff of high and previous close
+    
+    
+    df["L-PC"] = df["Low"] - df["Adj Close"].shift(1) # calculate diff of low and previous close
+    
+    
+    df["TR"] = df[["H-L","H-PC","L-PC"]].max(axis=1,skipna=False) # calculate max of all the diffs
+    
+    
+    df["ATR"] = df["TR"].ewm(com=window, min_periods = window).mean() # calculate moving average
+    
+    
+    return df["ATR"] # return the average true range

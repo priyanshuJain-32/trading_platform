@@ -16,6 +16,7 @@ import numpy as np
 from macd import macdFunc
 from bollingerBands import bBands
 from averageTrueRange import atr
+from relativeStrengthIndex import rsi
 
 """ 
 Download the data using Yahoo finance
@@ -29,15 +30,21 @@ cl_price = {}
 for ticker in stocks:
     cl_price[ticker] = (yf.download(ticker, start, end, period="1mo", interval="15m")).dropna(axis=0)
     
-# Calcualte and save MACD to data
+# Calculate and save MACD to data
 for ticker in stocks:
     cl_price[ticker][["MACD","Signal"]] = macdFunc(cl_price[ticker])
     
+# Calculate and save ATR to data
 for ticker in stocks:
     cl_price[ticker]["ATR"] = atr(cl_price[ticker])
     
+# Calculate and save Bollinger Bands to data
 for ticker in stocks:
     cl_price[ticker][["middleBand", "upperBand", "lowerBand", "bandWidth"]] = bBands(cl_price[ticker], window=14, sd=2)
+
+# Calculate and save RSI to data
+for ticker in stocks:
+    cl_price[ticker]["RSI"] = rsi(cl_price[ticker], window = 14)
 
 # cl_price.plot()
 # cl_price.drop("^GSPC", axis=1).plot()

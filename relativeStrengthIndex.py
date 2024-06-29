@@ -30,4 +30,22 @@ Created on Sat Jun 29 13:50:38 2024
         Vice versa for the lower mark.
 """
 
-def rsi(DF, window)
+import numpy as np
+
+def rsi(DF, window = 14):
+    
+    df = DF.copy()
+    
+    df["change"] = df["Adj Close"] - df["Adj Close"].shift(1)
+    
+    df["gain"] = np.where(df["change"]>=0, df["change"], 0)
+    df["loss"] = np.where(df["change"]<0, -df["change"], 0)
+    
+    df["avg_gain"] = df["gain"].ewm(alpha = 1/window, min_periods = window)
+    df["avg_loss"] = df["gain"].ewm(alpha = 1/window, min_periods = window)
+    
+    df["rs"] = df["avg_gain"]/df["avg_loss"]
+    
+    df["rsi"] = 100 - (100 / (1 + df["rs"]))
+    
+    return df["rsi"]
