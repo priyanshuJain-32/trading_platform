@@ -14,8 +14,8 @@ import numpy as np
 
 # Custom functions
 from macd import macdFunc
-from bollingerBands_ATR import atr, bBands
-
+from bollingerBands import bBands
+from averageTrueRange import atr
 
 """ 
 Download the data using Yahoo finance
