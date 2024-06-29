@@ -8,11 +8,13 @@ Created on Fri Jun 28 14:28:06 2024
 
 # Download the libraries
 import datetime as dt
-
 import yfinance as yf
 import pandas as pd
 import numpy as np
+
+# Custom functions
 from macd import macdFunc
+from bollingerBands_ATR import atr, bBands
 
 
 """ 
@@ -27,8 +29,15 @@ cl_price = {}
 for ticker in stocks:
     cl_price[ticker] = (yf.download(ticker, start, end, period="1mo", interval="15m")).dropna(axis=0)
     
+# Calcualte and save MACD to data
 for ticker in stocks:
     cl_price[ticker][["MACD","Signal"]] = macdFunc(cl_price[ticker])
+    
+for ticker in stocks:
+    cl_price[ticker]["ATR"] = atr(cl_price[ticker])
+    
+for ticker in stocks:
+    cl_price[ticker][["middleBand", "upperBand", "lowerBand", "bandWidth"]] = bBands(cl_price[ticker], window=14, sd=2)
 
 # cl_price.plot()
 # cl_price.drop("^GSPC", axis=1).plot()
