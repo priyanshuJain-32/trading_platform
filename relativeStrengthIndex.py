@@ -41,8 +41,8 @@ def rsi(DF, window = 14):
     df["gain"] = np.where(df["change"]>=0, df["change"], 0)
     df["loss"] = np.where(df["change"]<0, -df["change"], 0)
     
-    df["avg_gain"] = df["gain"].ewm(alpha = 1/window, min_periods = window)
-    df["avg_loss"] = df["gain"].ewm(alpha = 1/window, min_periods = window)
+    df["avg_gain"] = df["gain"].ewm(alpha = 1/window, min_periods = window).mean()
+    df["avg_loss"] = df["gain"].ewm(alpha = 1/window, min_periods = window).mean()
     
     df["rs"] = df["avg_gain"]/df["avg_loss"]
     

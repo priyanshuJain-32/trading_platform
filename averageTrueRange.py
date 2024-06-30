@@ -18,8 +18,10 @@ Takes into account price movement in each period by considering the following ra
 Used for volatility studies. If both ATR and Bollinger Bands say volatility is increasing then
 we consider that it is infact increasing.
 """
+import pandas as pd
 
-def atr(DF, window = 14):
+def atr(DF: pd.DataFrame, window: int = 14) -> pd.DataFrame:
+    
     df = DF.copy() # create copy of original Database
     
     

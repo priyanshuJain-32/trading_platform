@@ -17,6 +17,7 @@ from macd import macdFunc
 from bollingerBands import bBands
 from averageTrueRange import atr
 from relativeStrengthIndex import rsi
+from averageDirectionalIndex import adx
 
 """ 
 Download the data using Yahoo finance
@@ -45,6 +46,9 @@ for ticker in stocks:
 # Calculate and save RSI to data
 for ticker in stocks:
     cl_price[ticker]["RSI"] = rsi(cl_price[ticker], window = 14)
+    
+for ticker in stocks:
+    cl_price[ticker]["ADX"] = adx(cl_price[ticker], window = 20)
 
 # cl_price.plot()
 # cl_price.drop("^GSPC", axis=1).plot()
