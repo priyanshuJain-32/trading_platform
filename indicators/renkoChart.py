@@ -29,21 +29,33 @@ RENKO CHART
         Backtesting can be used to find the most appropriate brick size.
 """
 
-from averageTrueRange import atr
+from averageTrueRange import atr # to be used when implementing atr
 from stocktrends import Renko
+import pandas as pd
+import yfinance as yf
 
-def renkoFunc(DF):
+def renkoFunc(DF: pd.DataFrame, ticker: str, use_atr: bool = False) -> pd.DataFrame :
     df = DF.copy()
     df.drop("Close", axis = 1, inplace = True)
     
     df.reset_index(inplace = True)
-    print(df)
+
     df.columns = ["date", "open", "high", "low", "close", "volume"]
     
     dfRenko = Renko(df)
     
-    dfRenko.brick_size = 4
+    if use_atr:
+        
+        # we will need to download the hourly data if we want to use ATR this can be changed
+        # its something that author recommended from where I learned
+        hourly_data = yf.download(ticker, period = '1y', interval = '1h')
+        hourly_data.dropna(axis = 0, inplace=True)
+        
+        # iloc -1 to pick the last value of the ATR series returned
+        dfRenko.brick_size = 3*round(atr(hourly_data, window = 120).iloc[-1], 0)
+    else:
+        dfRenko.brick_size = 4
     
     renkoDf = dfRenko.get_ohlc_data()
-    print(renkoDf)
+
     return renkoDf

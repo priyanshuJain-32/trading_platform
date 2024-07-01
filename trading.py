@@ -12,14 +12,21 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
-# Import Custom functions
-from macd import macdFunc
-from bollingerBands import bBands
-from averageTrueRange import atr
-from relativeStrengthIndex import rsi
-from averageDirectionalIndex import adx
-from renkoChart import renkoFunc
+# Import Custom Indicators
+from indicators.macd import macdFunc
+from indicators.bollingerBands import bBands
+from indicators.averageTrueRange import atr
+from indicators.relativeStrengthIndex import rsi
+from indicators.averageDirectionalIndex import adx
+from indicators.renkoChart import renkoFunc
 
+# Import Custom Performance Indicators
+from kpi.compoundedAnnualGrowthRate import cagr
+from kpi.volatility import volatility
+from kpi.sharpeRatio import sharpe
+from kpi.sortinoRatio import sortino
+# from kpi.maximumDrawdown import maxDraw
+# from kpi.calmarRatio import calmar
 
 """ 
 Download the data using Yahoo finance
@@ -34,42 +41,34 @@ results_data = {}
 renko = {}
 
 for ticker in stocks:
+    
+    # Download open high low close volume data
     ohlcv_data[ticker] = (yf.download(ticker, start, end, period="1mo", interval="15m")).dropna(axis=0)
     results_data[ticker] = ohlcv_data[ticker].copy()
 
-# Calculate and save MACD to data
-for ticker in stocks:
+    # Calculate and save MACD to data
     results_data[ticker][["MACD","Signal"]] = macdFunc(ohlcv_data[ticker])
     
-# Calculate and save ATR to data
-for ticker in stocks:
+    # Calculate and save ATR to data
     results_data[ticker]["ATR"] = atr(ohlcv_data[ticker])
     
-# Calculate and save Bollinger Bands to data
-for ticker in stocks:
+    # Calculate and save Bollinger Bands to data
     results_data[ticker][["middleBand", "upperBand", "lowerBand", "bandWidth"]] = bBands(ohlcv_data[ticker], window=14, sd=2)
 
-# Calculate and save RSI to data
-for ticker in stocks:
+    # Calculate and save RSI to data
     results_data[ticker]["RSI"] = rsi(ohlcv_data[ticker], window = 14)
     
-for ticker in stocks:
+    # Calculate ADX for the data
     results_data[ticker]["ADX"] = adx(ohlcv_data[ticker], window = 20)
 
+    # Calculate Renko for the data
+    renko[ticker] = renkoFunc(ohlcv_data[ticker], ticker = ticker, use_atr = False)
+
+
 for ticker in stocks:
-    renko[ticker] = renkoFunc(ohlcv_data[ticker])
+    
+    print("CAGR for {} = {}".format(ticker, cagr(ohlcv_data[ticker])))
+    print("Vol for {} = {}".format(ticker, volatility(ohlcv_data[ticker])))
+    print("\nSharpe for {} = {}".format(ticker, sharpe(ohlcv_data[ticker])))
+    print("Sortino for {} = {}\n".format(ticker, sortino(ohlcv_data[ticker])))
 
-# cl_price.plot()
-# cl_price.drop("^GSPC", axis=1).plot()
-
-""" 
-Calculate simple return "R" and log return "r" 
-"""
-simple_return = ohlcv_data.pct_change()
-simple_return.dropna(axis=0, inplace=True)
-
-log_return = pd.DataFrame()
-for ticker in stocks:
-    log_return[ticker] = np.log(ohlcv_data[ticker]) - np.log(ohlcv_data[ticker]).shift(1)
-
-log_return.dropna(axis=0, inplace=True)
