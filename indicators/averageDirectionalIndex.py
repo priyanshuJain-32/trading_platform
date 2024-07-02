@@ -32,6 +32,19 @@ import pandas as pd
 import numpy as np
 
 def adx(DF: pd.DataFrame, window: int = 20) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    DF : pd.DataFrame, data on open high low close for a stock.
+    
+    window : int, optional
+        The window size to consider for mvoing average. The default is 20.
+
+    Returns
+    -------
+    df["ADX"]: Pandas DataFrame. Average Directional Index.
+
+    """
     
     df = DF.copy() # create copy of original Database
     

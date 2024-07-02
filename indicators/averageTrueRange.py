@@ -22,6 +22,20 @@ import pandas as pd
 
 def atr(DF: pd.DataFrame, window: int = 14) -> pd.DataFrame:
     
+    """
+    Parameters
+    ----------
+    DF : pd.DataFrame, high, low, Adj close for a stock.
+    
+    window : int, optional
+        The window size to consider for mvoing average. The default is 14.
+
+    Returns
+    -------
+    df["ATR"] : Pandas DataFrame. The Average True Range value for the given data.
+
+    """
+    
     df = DF.copy() # create copy of original Database
     
     

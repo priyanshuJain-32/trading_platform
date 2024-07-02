@@ -35,6 +35,24 @@ import pandas as pd
 import yfinance as yf
 
 def renkoFunc(DF: pd.DataFrame, ticker: str, use_atr: bool = False) -> pd.DataFrame :
+    
+    """
+    Parameters
+    ----------
+    DF : pd.DataFrame, data on date, open, high, low, close, and volume for a stock.
+    
+    ticker : str, stock ticker symbol.
+        
+    use_atr : bool, optional
+        If we have to Average True Range or not. The default is False.
+        If no then a fixed brick size of 4 will be used.
+
+    Returns
+    -------
+    renkoDf : Pandas DataFrame. Gives the Renko bricks data for the given stock.
+
+    """
+    
     df = DF.copy()
     df.drop("Close", axis = 1, inplace = True)
     

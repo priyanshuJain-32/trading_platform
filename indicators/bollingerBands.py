@@ -29,6 +29,27 @@ Implementation of Bollinger bands:
 import pandas as pd
 
 def bBands(DF: pd.DataFrame, window: int = 20, sd: int = 2) -> pd.DataFrame:
+    
+    """
+
+    Parameters
+    ----------
+    DF : DF : pd.DataFrame, data on Adj close for a stock.
+    
+    window : int, optional
+        The window size to consider for mvoing average. The default is 20.
+        
+    sd : int, optional
+        Standard deviation to consider. The default is 2.
+
+    Returns
+    -------
+    df.loc[:,["middleBand", "upperBand", "lowerBand", "bandWidth"]] : Pandas DataFrame.
+        
+        Returns the bollinger bands for the given stock data.
+
+    """
+    
     df = DF.copy()
     
     df["middleBand"] = df["Adj Close"].rolling(window).mean()

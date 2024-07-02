@@ -34,6 +34,21 @@ import numpy as np
 import pandas as pd
 
 def rsi(DF: pd.DataFrame, window: int = 14) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    DF : DF : pd.DataFrame, data on Adj close for a stock.
+    
+    window : int, optional
+        The window size to consider for mvoing average. The default is 14.
+
+    Returns
+    -------
+    df["rsi"]: Pandas DataFrame
+        
+        Relative Strength Index for the data calculated using Adj Close prices.
+
+    """
     
     df = DF.copy()
     
