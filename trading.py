@@ -7,6 +7,9 @@ Created on Fri Jun 28 14:28:06 2024
 """
 
 # Download the libraries
+# import sys
+# sys.path.append(".")
+
 import datetime as dt
 import yfinance as yf
 import pandas as pd
@@ -99,4 +102,90 @@ for ticker in stocks:
     kpi_data.loc[idx,"Calmar Ratio"] = calmar(ohlcv_data[ticker])
     
     idx += 1
+
+"""
+    Strategy 1 - Portfolio Rebalancing
+"""
+
+# Download the data for last 10 years with monthly prices
+
+from backtesting.portfolioRebalancing import pfRebalance
+from tickers.dji_2018_tickers import dji_2018_tickers
+
+ohlc_mon = {} # database of each stocks monthly prices
+start = dt.datetime.today() - dt.timedelta(3650)
+end = dt.datetime.today()
+
+for ticker in dji_2018_tickers:
+    
+    ohlc_mon = yf.download(ticker, start, end, interval = '1mo')
+    ohlc_mon[ticker].dropna(inplace = True, how = 'all')
+    
+dji_2018_tickers = ohlc_mon.keys() # keeping only those tickers for which there was no error
+
+# Calculate returns for each stock and save in seperate dataFrame
+
+return_df = pd.DataFrame()
+
+for ticker in dji_2018_tickers:
+    ohlc_mon[ticker]["monthly_return"] = ohlc_mon[ticker]["Adj Close"].pct_change()
+    return_df[ticker] = ohlc_mon[ticker]["monthly_return"]
+    
+return_df.dropna(inplace = True)
+
+"""
+Run and calculate strategy KPI's
+"""
+portfolio_returns = pfRebalance(return_df, 6, 3)
+
+print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
+
+print(sharpe(portfolio_returns, custom_risk_free_rate = False, period = "monthly", column = "monthly_return", calculate_return = False))
+
+print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

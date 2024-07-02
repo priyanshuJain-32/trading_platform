@@ -34,7 +34,7 @@ from kpi.compoundedAnnualGrowthRate import cagr
 import numpy as np
 import pandas as pd
 
-def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0) -> int:
+def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     
     """
     Parameters
@@ -47,6 +47,18 @@ def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float =
     
     rate : float, optional. If custom risk free rate is True use this to provide the rate. 
         The default is 0.0.
+        
+    period : String, Optional parameter specifying period of volatility 
+                
+                "quarterly", 
+                "monthly", 
+                "daily". 
+                
+            The default is "monthly".
+    
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
 
     Returns
     -------
@@ -69,14 +81,28 @@ def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float =
     else:
         risk_free_rate = riskFreeReturn()
     
-    df["returns"] = df["Adj Close"].pct_change()
+    if column != "Adj Close" and calculate_return == True:
+        df["return"] = df[column].pct_change()
+        
+    elif column != "Adj Close" and calculate_return == False:
+        df["return"] = df[column]
     
-    neg_returns = np.where(df["returns"]>0, 0, df["returns"])
+    elif column == "Adj Close" and calculate_return == True:
+        df["return"] = df["Adj Close"].pct_change()
+    
+    neg_returns = np.where(df["return"]>0, 0, df["return"])
     
     neg_returns = pd.DataFrame(neg_returns[neg_returns!=0])
     
-    neg_vol = neg_returns.std().iloc[-1]*np.sqrt(252)
+    if period == "quarterly":
+        n = 4
+    if period == "monthly":
+        n = 12
+    elif period == "daily":
+        n = 252
     
-    sortino = (cagr(df) - risk_free_rate) / neg_vol
+    neg_vol = neg_returns.std().iloc[-1]*np.sqrt(n)
+    
+    sortino = (cagr(df, period = period, column = column, calculate_return = calculate_return) - risk_free_rate) / neg_vol
     
     return sortino

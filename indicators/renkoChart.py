@@ -28,8 +28,10 @@ RENKO CHART
     Note: Do not use very small brick size as it will be noisy.
         Backtesting can be used to find the most appropriate brick size.
 """
+import sys
+sys.path.append("..")
 
-from averageTrueRange import atr # to be used when implementing atr
+from indicators.averageTrueRange import atr # to be used when implementing atr
 from stocktrends import Renko
 import pandas as pd
 import yfinance as yf

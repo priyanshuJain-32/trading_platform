@@ -27,7 +27,9 @@ Average Directional Index (ADX):
     
     Calculations can vary a lot on different platforms and how it is calculated.
 """
-from averageTrueRange import atr
+import sys
+sys.path.append("..")
+from indicators.averageTrueRange import atr
 import pandas as pd
 import numpy as np
 

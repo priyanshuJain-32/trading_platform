@@ -19,13 +19,25 @@ from kpi.compoundedAnnualGrowthRate import cagr
 from kpi.maximumDrawdown import maxDraw
 import pandas as pd
 
-def calmar(DF: pd.DataFrame) -> int:
+def calmar(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     
     """
 
     Parameters
     ----------
     DF : pd.DataFrame, Data with Adj Close price of stock.
+    
+    period : String, Optional parameter specifying period of volatility 
+                
+                "quarterly", 
+                "monthly", 
+                "daily". 
+                
+            The default is "monthly".
+    
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
 
     Returns
     -------
@@ -35,4 +47,4 @@ def calmar(DF: pd.DataFrame) -> int:
     
     df = DF.copy()
     
-    return cagr(df) / maxDraw(df)
+    return cagr(df, period = period, column = column, calculate_return = calculate_return) / maxDraw(df, period = period, column = column, calculate_return = calculate_return)

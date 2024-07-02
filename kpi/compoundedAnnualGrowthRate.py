@@ -18,7 +18,7 @@ Created on Mon Jul  1 19:01:44 2024
 
 import pandas as pd
 
-def cagr(DF: pd.DataFrame, period: str = "monthly") -> int:
+def cagr(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     
     """
     Parameters
@@ -32,6 +32,10 @@ def cagr(DF: pd.DataFrame, period: str = "monthly") -> int:
                 "daily". 
                 
             The default is "monthly".
+    
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
 
     Returns
     -------
@@ -40,7 +44,16 @@ def cagr(DF: pd.DataFrame, period: str = "monthly") -> int:
     """
     
     df = DF.copy()
-    df["return"] = df["Adj Close"].pct_change()
+    
+    if column != "Adj Close" and calculate_return == True:
+        df["return"] = df[column].pct_change()
+        
+    elif column != "Adj Close" and calculate_return == False:
+        df["return"] = df[column]
+    
+    elif column == "Adj Close" and calculate_return == True:
+        df["return"] = df["Adj Close"].pct_change()
+    
     df["cum_return"] = (1+df["return"]).cumprod()
     
     if period == "quarterly":

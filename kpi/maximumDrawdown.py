@@ -28,7 +28,7 @@ Maximum Drawdown & Calmar Ratio
 """
 import pandas as pd
 
-def maxDraw(DF: pd.DataFrame) -> int:
+def maxDraw(DF: pd.DataFrame, column: str = "Adj Close", calculate_return: bool = True) -> int:
     """
 
     Parameters
@@ -38,12 +38,25 @@ def maxDraw(DF: pd.DataFrame) -> int:
     Returns
     -------
     maxDD : int, Maximum Drawdown
+    
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
 
     """
     
     df = DF.copy()
     
-    df["return"] = df["Adj Close"].pct_change()
+    if column != "Adj Close" and calculate_return == True:
+        df["return"] = df[column].pct_change()
+        
+    elif column != "Adj Close" and calculate_return == False:
+        df["return"] = df[column]
+    
+    elif column == "Adj Close" and calculate_return == True:
+        df["return"] = df["Adj Close"].pct_change()
+    
+
     df["cum_return"] = (1+df["return"]).cumprod()
     
     df["cum_roll_max"] = df["cum_return"].cummax()

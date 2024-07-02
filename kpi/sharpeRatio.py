@@ -36,18 +36,30 @@ from otherData.riskFreeReturn import riskFreeReturn
 from kpi.compoundedAnnualGrowthRate import cagr
 from kpi.volatility import volatility
 
-def sharpe(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0) -> int:
+def sharpe(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     """
 
     Parameters
     ----------
-    DF : Pandas DataFrame. With Adj Close price for stock.
+    DF : Pandas DataFrame. Data for stock.
     
     custom_risk_free_rate : bool, optional, specifies whether a custom risk free rate
         is to be used. The default is False.
     
     rate : float, optional. If custom risk free rate is True use this to provide the rate. 
         The default is 0.0.
+    
+    period : String, Optional parameter specifying period of volatility 
+                
+                "quarterly", 
+                "monthly", 
+                "daily". 
+                
+            The default is "monthly".
+        
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
 
     Returns
     -------
@@ -72,6 +84,6 @@ def sharpe(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 
         
         risk_free_rate = riskFreeReturn()
     
-    sharpe = (cagr(df) - risk_free_rate) / volatility(df)
+    sharpe = (cagr(df, period = period, column = column, calculate_return = calculate_return) - risk_free_rate) / volatility(df, period = period, column = column, calculate_return = calculate_return)
     
     return sharpe

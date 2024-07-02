@@ -29,7 +29,7 @@ Volatility:
 import numpy as np
 import pandas as pd
 
-def volatility(DF: pd.DataFrame, period = "monthly") -> int:
+def volatility(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     """
 
     Parameters
@@ -39,11 +39,15 @@ def volatility(DF: pd.DataFrame, period = "monthly") -> int:
     period : String, Optional parameter specifying period of volatility 
                 
                 "quarterly", 
-                "monthly", 
+                "monthly",
                 "daily". 
                 
             The default is "monthly".
-
+    
+    column : String, column to use in the given dataFrame for calculating CAGR. Default Adj Close.
+    
+    calculate_return: Boolean, Whether to calculate return for the specified column. Default True.
+    
     Returns
     -------
     vol : Integer, Volatility measure of the stock return over given period interval.
@@ -51,7 +55,14 @@ def volatility(DF: pd.DataFrame, period = "monthly") -> int:
     """
     df = DF.copy()
     
-    df["return"] = df["Adj Close"].pct_change()
+    if column != "Adj Close" and calculate_return == True:
+        df["return"] = df[column].pct_change()
+        
+    elif column != "Adj Close" and calculate_return == False:
+        df["return"] = df[column]
+    
+    elif column == "Adj Close" and calculate_return == True:
+        df["return"] = df["Adj Close"].pct_change()
     
     if period == "quarterly":
         n = len(df)/4
