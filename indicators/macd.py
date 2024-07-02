@@ -26,8 +26,9 @@ Created on Fri Jun 28 19:30:16 2024
         Not a predictive indicator. It is a lagging indicator.
     
 """
+import pandas as pd
 
-def macdFunc(DF, fast_len=12, slow_len=26, signal_smoothing=9):
+def macdFunc(DF: pd.DataFrame, fast_len: int = 12, slow_len: int = 26, signal_smoothing: int = 9) -> pd.DataFrame:
     df = DF.copy()
     df["ma_fast"] = df["Adj Close"].ewm(span = fast_len, min_periods = fast_len).mean()
     df["ma_slow"] = df["Adj Close"].ewm(span = slow_len, min_periods = slow_len).mean()

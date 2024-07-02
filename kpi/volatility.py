@@ -27,12 +27,39 @@ Volatility:
 
 
 import numpy as np
+import pandas as pd
 
-def volatility(DF):
+def volatility(DF: pd.DataFrame, period = "monthly") -> int:
+    """
+
+    Parameters
+    ----------
+    DF : Pandas DataFrame, Data of stocks with Adj Close prices.
+    
+    period : String, Optional parameter specifying period of volatility 
+                
+                "quarterly", 
+                "monthly", 
+                "daily". 
+                
+            The default is "monthly".
+
+    Returns
+    -------
+    vol : Integer, Volatility measure of the stock return over given period interval.
+
+    """
     df = DF.copy()
     
     df["return"] = df["Adj Close"].pct_change()
     
-    vol = df["return"].std()*np.sqrt(252)
+    if period == "quarterly":
+        n = len(df)/4
+    if period == "monthly":
+        n = len(df)/12
+    elif period == "daily":
+        n = len(df)/252
+    
+    vol = df["return"].std()*np.sqrt(n)
     
     return vol
