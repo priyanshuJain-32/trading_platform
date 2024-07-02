@@ -26,13 +26,17 @@ Implementation of Bollinger bands:
     
     
 """
+import pandas as pd
 
-def bBands(DF, window=20, sd=2):
+def bBands(DF: pd.DataFrame, window: int = 20, sd: int = 2) -> pd.DataFrame:
     df = DF.copy()
+    
     df["middleBand"] = df["Adj Close"].rolling(window).mean()
+    
     df["upperBand"] = df["middleBand"] + sd * df["Adj Close"].rolling(window).std(ddof = 0)
+    
     df["lowerBand"] = df["middleBand"] - sd * df["Adj Close"].rolling(window).std(ddof = 0)
+    
     df["bandWidth"] = df["upperBand"] - df["lowerBand"]
+    
     return df.loc[:,["middleBand", "upperBand", "lowerBand", "bandWidth"]]
-
-

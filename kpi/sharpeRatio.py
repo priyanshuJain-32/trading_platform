@@ -27,17 +27,36 @@ Sharpe ratio: It is the ratio of average return earned in excess of risk
     Drawback: One criticism of Sharpe ratio is that it fails to distinguish between upside and downside
     fluctuation. That is where Sortino comes into picture.
 """
+
 import sys
+import pandas as pd
 sys.path.append("..")
 
-from otherData.riskFreeReturn import risk_free_rate, riskFreeReturn
+from otherData.riskFreeReturn import riskFreeReturn
 from kpi.compoundedAnnualGrowthRate import cagr
 from kpi.volatility import volatility
 
-def sharpe(DF, custom_risk_free_rate: bool = False, rate: float = 0.0):
+def sharpe(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0) -> int:
+    """
+
+    Parameters
+    ----------
+    DF : Pandas DataFrame. With Adj Close price for stock.
+    
+    custom_risk_free_rate : bool, optional, specifies whether a custom risk free rate
+        is to be used. The default is False.
+    
+    rate : float, optional. If custom risk free rate is True use this to provide the rate. 
+        The default is 0.0.
+
+    Returns
+    -------
+    sharpe : Integer. Sharpe Ratio of stock.
+
+    """
+    
     df = DF.copy()
     
-    global risk_free_rate
     
     if custom_risk_free_rate:
     
@@ -45,15 +64,13 @@ def sharpe(DF, custom_risk_free_rate: bool = False, rate: float = 0.0):
             risk_free_rate = rate
         
         else:
-            if risk_free_rate == 0:
-            
-                riskFreeReturn()
+            risk_free_rate = riskFreeReturn()
             
             print("provide custom risk free rate, currently it is latest US Treasury 5 year bold yield")
     
-    elif risk_free_rate == 0:
+    else:
         
-        riskFreeReturn()
+        risk_free_rate = riskFreeReturn()
     
     sharpe = (cagr(df) - risk_free_rate) / volatility(df)
     

@@ -26,5 +26,30 @@ Maximum Drawdown & Calmar Ratio
     Drawdown also helps us understand whether our leverage is good and 
     investment is solvent or not.
 """
+import pandas as pd
 
+def maxDraw(DF: pd.DataFrame) -> int:
+    """
 
+    Parameters
+    ----------
+    DF : pd.DataFrame. Data of stock prices.
+
+    Returns
+    -------
+    maxDD : int, Maximum Drawdown
+
+    """
+    
+    df = DF.copy()
+    
+    df["return"] = df["Adj Close"].pct_change()
+    df["cum_return"] = (1+df["return"]).cumprod()
+    
+    df["cum_roll_max"] = df["cum_return"].cummax()
+    
+    df["drawdown"] = df["cum_roll_max"] - df["cum_return"]
+    
+    maxDD = (df["drawdown"]/df["cum_roll_max"]).max()
+    
+    return maxDD

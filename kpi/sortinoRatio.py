@@ -28,16 +28,33 @@ Sortino ratio:
 import sys
 sys.path.append("..")
 
-from otherData.riskFreeReturn import risk_free_rate, riskFreeReturn
+from otherData.riskFreeReturn import riskFreeReturn
 from kpi.compoundedAnnualGrowthRate import cagr
 
 import numpy as np
 import pandas as pd
 
-def sortino(DF, custom_risk_free_rate: bool = False, rate: float = 0.0):
-    df = DF.copy()
+def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float = 0.0) -> int:
     
-    global risk_free_rate
+    """
+    Parameters
+    ----------
+    DF : pd.DataFrame
+        Data of stock prices.
+        
+    custom_risk_free_rate : bool, optional, specifies whether a custom risk free rate
+        is to be used. The default is False.
+    
+    rate : float, optional. If custom risk free rate is True use this to provide the rate. 
+        The default is 0.0.
+
+    Returns
+    -------
+    sortino : Integer. Sortino Ratio of stock.
+
+    """
+    
+    df = DF.copy()
     
     if custom_risk_free_rate:
         
@@ -45,15 +62,12 @@ def sortino(DF, custom_risk_free_rate: bool = False, rate: float = 0.0):
             risk_free_rate = rate
             
         else:
-            if risk_free_rate == 0:
-                riskFreeReturn()
+            risk_free_rate = riskFreeReturn()
             
             print("provide custom risk free rate, currently it is latest US Treasury 5 year bold yield")
             
     else:
-        if risk_free_rate == 0:
-        
-            riskFreeReturn()
+        risk_free_rate = riskFreeReturn()
     
     df["returns"] = df["Adj Close"].pct_change()
     
@@ -61,7 +75,7 @@ def sortino(DF, custom_risk_free_rate: bool = False, rate: float = 0.0):
     
     neg_returns = pd.DataFrame(neg_returns[neg_returns!=0])
     
-    neg_vol = neg_returns.std()*np.sqrt(252)
+    neg_vol = neg_returns.std().iloc[-1]*np.sqrt(252)
     
     sortino = (cagr(df) - risk_free_rate) / neg_vol
     

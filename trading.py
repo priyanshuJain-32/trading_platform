@@ -25,8 +25,8 @@ from kpi.compoundedAnnualGrowthRate import cagr
 from kpi.volatility import volatility
 from kpi.sharpeRatio import sharpe
 from kpi.sortinoRatio import sortino
-# from kpi.maximumDrawdown import maxDraw
-# from kpi.calmarRatio import calmar
+from kpi.maximumDrawdown import maxDraw
+from kpi.calmarRatio import calmar
 
 """ 
 Download the data using Yahoo finance
@@ -35,15 +35,22 @@ Download the data using Yahoo finance
 stocks = {"AMZN", "MSFT","META","GOOG", "NVDA", "^GSPC"}
 start = dt.datetime.today() - dt.timedelta(60)
 end = dt.datetime.today()
-
 ohlcv_data = {}
+
+for ticker in stocks:
+    
+    # Download open high low close volume data
+    ohlcv_data[ticker] = (yf.download(ticker, start, end, period="1mo", interval="15m")).dropna(axis=0)
+
+"""
+    Run and Save data on Indicators for stocks
+"""
 results_data = {}
 renko = {}
 
 for ticker in stocks:
     
     # Download open high low close volume data
-    ohlcv_data[ticker] = (yf.download(ticker, start, end, period="1mo", interval="15m")).dropna(axis=0)
     results_data[ticker] = ohlcv_data[ticker].copy()
 
     # Calculate and save MACD to data
@@ -65,10 +72,31 @@ for ticker in stocks:
     renko[ticker] = renkoFunc(ohlcv_data[ticker], ticker = ticker, use_atr = False)
 
 
+"""
+    Run and save KPI's for the stocks.
+"""
+
+kpi_data = pd.DataFrame(columns = ["Ticker", "CAGR", 
+                                   "Volatility", "Sharpe Ratio", 
+                                   "Sortino Ratio", "Maximum Drawdown", 
+                                   "Calmar Ratio"]) 
+idx = 0
+
 for ticker in stocks:
     
-    print("CAGR for {} = {}".format(ticker, cagr(ohlcv_data[ticker])))
-    print("Vol for {} = {}".format(ticker, volatility(ohlcv_data[ticker])))
-    print("\nSharpe for {} = {}".format(ticker, sharpe(ohlcv_data[ticker])))
-    print("Sortino for {} = {}\n".format(ticker, sortino(ohlcv_data[ticker])))
+    kpi_data.loc[idx,"Ticker"] = ticker
+    
+    kpi_data.loc[idx,"CAGR"] = cagr(ohlcv_data[ticker])
+
+    kpi_data.loc[idx,"Volatility"] = volatility(ohlcv_data[ticker])
+
+    kpi_data.loc[idx,"Sharpe Ratio"] = sharpe(ohlcv_data[ticker])
+
+    kpi_data.loc[idx,"Sortino Ratio"] = sortino(ohlcv_data[ticker])
+    
+    kpi_data.loc[idx,"Maximum Drawdown"] = maxDraw(ohlcv_data[ticker])
+    
+    kpi_data.loc[idx,"Calmar Ratio"] = calmar(ohlcv_data[ticker])
+    
+    idx += 1
 

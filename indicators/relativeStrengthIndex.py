@@ -31,8 +31,9 @@ Created on Sat Jun 29 13:50:38 2024
 """
 
 import numpy as np
+import pandas as pd
 
-def rsi(DF, window = 14):
+def rsi(DF: pd.DataFrame, window: int = 14) -> pd.DataFrame:
     
     df = DF.copy()
     
