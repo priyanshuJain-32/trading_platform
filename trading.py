@@ -7,8 +7,6 @@ Created on Fri Jun 28 14:28:06 2024
 """
 
 # Download the libraries
-# import sys
-# sys.path.append(".")
 
 import datetime as dt
 import yfinance as yf
