@@ -12,6 +12,7 @@ import datetime as dt
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Import Custom Indicators
 from indicators.macd import macdFunc
@@ -121,18 +122,35 @@ for ticker in stocks:
 # Use returns_calc for calculating returns and download.
 
 return_df = returns_calc(dji_2018_tickers)
-
+return_dji = returns_calc(["^DJI"])
 """
 Run and calculate strategy KPI's
 """
 # Strategy 1 Portfolio Rebalance
+# Run and save returns for portfolio
 portfolio_returns = pfRebalance(return_df, max_size = 15, rebalance = 7)
 
+# Print KPI's for portfolio Returns
 print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
-
 print(sharpe(portfolio_returns, custom_risk_free_rate = False, period = "monthly", column = "monthly_return", calculate_return = False))
-
 print(maxDraw(portfolio_returns, column = "monthly_return", calculate_return = False))
+
+# Print KPI's for Index Returns
+print(cagr(return_dji, period = "monthly", column = "^DJI", calculate_return = False))
+print(sharpe(return_dji, custom_risk_free_rate = False, period = "monthly", column = "^DJI", calculate_return = False))
+print(maxDraw(return_dji, column = "^DJI", calculate_return = False))
+
+# Visual comparison
+fig, ax = plt.subplots()
+
+plt.plot((1+portfolio_returns).cumprod())
+plt.plot((1+return_dji["^DJI"].reset_index(drop=True)).cumprod())
+
+plt.title("Index Return vs Strategy Return")
+plt.ylabel("cumulative return")
+plt.xlabel("months")
+
+ax.legend(["Strategy Return","Index Return"])
 
 # Strategy 2
 

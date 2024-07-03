@@ -24,10 +24,12 @@ Volatility:
     
     Fails to capture tail risk.
 """
-
+import sys
+sys.path.append("..")
 
 import numpy as np
 import pandas as pd
+from otherData.periods import periods
 
 def volatility(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     """
@@ -38,9 +40,11 @@ def volatility(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Clo
     
     period : String, Optional parameter specifying period of volatility 
                 
-                "quarterly", 
-                "monthly",
-                "daily". 
+                "yearly", "half_yearly", "quarterly", "monthly", "weekly", 
+                "daily", "four_hourly", "three_hourly", "two_hourly",
+                "one_hourly", "fourty_five_min", "thirty_min", "fifteen_min",
+                "ten_min", "five_min", "three_min", "two_min", "one_min", "thirty_sec", "fifteen_sec",
+                "ten_sec", "five_sec", "one_sec".
                 
             The default is "monthly".
     
@@ -64,12 +68,7 @@ def volatility(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Clo
     elif column == "Adj Close" and calculate_return == True:
         df["return"] = df["Adj Close"].pct_change()
     
-    if period == "quarterly":
-        n = len(df)/4
-    if period == "monthly":
-        n = len(df)/12
-    elif period == "daily":
-        n = len(df)/252
+    n = len(df)/periods[period]
     
     vol = df["return"].std()*np.sqrt(n)
     

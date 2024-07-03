@@ -30,6 +30,7 @@ sys.path.append("..")
 
 from otherData.riskFreeReturn import riskFreeReturn
 from kpi.compoundedAnnualGrowthRate import cagr
+from otherData.periods import periods
 
 import numpy as np
 import pandas as pd
@@ -48,11 +49,13 @@ def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float =
     rate : float, optional. If custom risk free rate is True use this to provide the rate. 
         The default is 0.0.
         
-    period : String, Optional parameter specifying period of volatility 
+    period : String, Optional parameter specifying period of cagr 
                 
-                "quarterly", 
-                "monthly", 
-                "daily". 
+                "yearly", "half_yearly", "quarterly", "monthly", "weekly", 
+                "daily", "four_hourly", "three_hourly", "two_hourly",
+                "one_hourly", "fourty_five_min", "thirty_min", "fifteen_min",
+                "ten_min", "five_min", "three_min", "two_min", "one_min", "thirty_sec", "fifteen_sec",
+                "ten_sec", "five_sec", "one_sec".
                 
             The default is "monthly".
     
@@ -94,12 +97,7 @@ def sortino(DF: pd.DataFrame, custom_risk_free_rate: bool = False, rate: float =
     
     neg_returns = pd.DataFrame(neg_returns[neg_returns!=0])
     
-    if period == "quarterly":
-        n = 4
-    if period == "monthly":
-        n = 12
-    elif period == "daily":
-        n = 252
+    n = periods[period]
     
     neg_vol = neg_returns.std().iloc[-1]*np.sqrt(n)
     

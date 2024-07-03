@@ -27,11 +27,13 @@ def calmar(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close",
     ----------
     DF : pd.DataFrame, Data with Adj Close price of stock.
     
-    period : String, Optional parameter specifying period of volatility 
+    period : String, Optional parameter specifying period of cagr 
                 
-                "quarterly", 
-                "monthly", 
-                "daily". 
+                "yearly", "half_yearly", "quarterly", "monthly", "weekly", 
+                "daily", "four_hourly", "three_hourly", "two_hourly",
+                "one_hourly", "fourty_five_min", "thirty_min", "fifteen_min",
+                "ten_min", "five_min", "three_min", "two_min", "one_min", "thirty_sec", "fifteen_sec",
+                "ten_sec", "five_sec", "one_sec".
                 
             The default is "monthly".
     

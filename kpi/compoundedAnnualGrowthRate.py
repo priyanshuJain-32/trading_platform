@@ -15,8 +15,10 @@ Created on Mon Jul  1 19:01:44 2024
     CAGR = (End Value/ Beginning Value)^(1/years) - 1
     
 """
-
+import sys
+sys.path.append("..")
 import pandas as pd
+from otherData.periods import periods
 
 def cagr(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", calculate_return: bool = True) -> int:
     
@@ -25,11 +27,13 @@ def cagr(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", c
     ----------
     DF : Pandas DataFrame, Data of stocks with Adj Close prices.
         
-    period : String, Optional parameter specifying period of volatility 
+    period : String, Optional parameter specifying period of cagr 
                 
-                "quarterly", 
-                "monthly", 
-                "daily". 
+                "yearly", "half_yearly", "quarterly", "monthly", "weekly", 
+                "daily", "four_hourly", "three_hourly", "two_hourly",
+                "one_hourly", "fourty_five_min", "thirty_min", "fifteen_min",
+                "ten_min", "five_min", "three_min", "two_min", "one_min", "thirty_sec", "fifteen_sec",
+                "ten_sec", "five_sec", "one_sec".
                 
             The default is "monthly".
     
@@ -56,12 +60,7 @@ def cagr(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close", c
     
     df["cum_return"] = (1+df["return"]).cumprod()
     
-    if period == "quarterly":
-        n = len(df)/4
-    if period == "monthly":
-        n = len(df)/12
-    elif period == "daily":
-        n = len(df)/252
+    n = len(df)/periods[period]
         
     CAGR = df["cum_return"].iloc[-1]**(1/n) - 1
     return round(CAGR,4)
