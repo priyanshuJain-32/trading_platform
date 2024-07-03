@@ -5,7 +5,7 @@ Created on Sat Jun 29 14:01:25 2024
 
 @author: priyanshu
 
-Average True Range: focuses on price movement and conveys how wildly he market is swinging.
+Average True Range: focuses on price movement and conveys how wildly the market is swinging.
 The value of ATR shows the fluctuation in value of stock. For eg if value is 10 for a 
 US stock then the stock will vary by $10 in that time period.
 

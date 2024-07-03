@@ -130,15 +130,23 @@ Run and calculate strategy KPI's
 # Run and save returns for portfolio
 portfolio_returns = pfRebalance(return_df, max_size = 15, rebalance = 7)
 
-# Print KPI's for portfolio Returns
-print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
-print(sharpe(portfolio_returns, custom_risk_free_rate = False, period = "monthly", column = "monthly_return", calculate_return = False))
-print(maxDraw(portfolio_returns, column = "monthly_return", calculate_return = False))
+strategy_results = pd.DataFrame(columns = ["Type",
+                                   "CAGR", 
+                                   "Sharpe", 
+                                   "MaxDraw"]
 
-# Print KPI's for Index Returns
-print(cagr(return_dji, period = "monthly", column = "^DJI", calculate_return = False))
-print(sharpe(return_dji, custom_risk_free_rate = False, period = "monthly", column = "^DJI", calculate_return = False))
-print(maxDraw(return_dji, column = "^DJI", calculate_return = False))
+# Save KPI's for Index Returns
+strategy_results.loc[0,"Type"] = "Index"
+strategy_results.loc[0,"CAGR"] = cagr(return_dji, period = "monthly", column = "^DJI", calculate_return = False)
+strategy_results.loc[0,"Sharpe"] = sharpe(return_dji, custom_risk_free_rate = False, period = "monthly", column = "^DJI", calculate_return = False)
+strategy_results.loc[0,"MaxDraw"] = maxDraw(return_dji, column = "^DJI", calculate_return = False)
+
+# Save KPI's for portfolio Returns
+
+strategy_results.loc[1,"Type"] = "Portfolio Rebalance"
+strategy_results.loc[1,"CAGR"] = cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False)
+strategy_results.loc[1,"Sharpe"] = sharpe(portfolio_returns, custom_risk_free_rate = False, period = "monthly", column = "monthly_return", calculate_return = False)
+strategy_results.loc[1,"MaxDraw"] = maxDraw(portfolio_returns, column = "monthly_return", calculate_return = False)
 
 # Visual comparison
 fig, ax = plt.subplots()
