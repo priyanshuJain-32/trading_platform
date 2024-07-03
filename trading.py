@@ -29,6 +29,15 @@ from kpi.sortinoRatio import sortino
 from kpi.maximumDrawdown import maxDraw
 from kpi.calmarRatio import calmar
 
+# Import Custom Strategies
+from backtesting.portfolioRebalancing import pfRebalance
+
+# Import Tickers
+from tickers.dji_2018_tickers import dji_2018_tickers
+
+# Import Data processing and download functions
+from otherData.returnsCalc import returns_calc
+
 """ 
 Download the data using Yahoo finance
 """
@@ -77,12 +86,15 @@ for ticker in stocks:
     Run and save KPI's for the stocks.
 """
 
-kpi_data = pd.DataFrame(columns = ["Ticker", "CAGR", 
-                                   "Volatility", "Sharpe Ratio", 
-                                   "Sortino Ratio", "Maximum Drawdown", 
+kpi_data = pd.DataFrame(columns = ["Ticker", 
+                                   "CAGR", 
+                                   "Volatility", 
+                                   "Sharpe Ratio", 
+                                   "Sortino Ratio", 
+                                   "Maximum Drawdown", 
                                    "Calmar Ratio"]) 
-idx = 0
 
+idx = 0
 for ticker in stocks:
     
     kpi_data.loc[idx,"Ticker"] = ticker
@@ -106,44 +118,23 @@ for ticker in stocks:
 """
 
 # Download the data for last 10 years with monthly prices
+# Use returns_calc for calculating returns and download.
 
-from backtesting.portfolioRebalancing import pfRebalance
-from tickers.dji_2018_tickers import dji_2018_tickers
-
-ohlc_mon = {} # database of each stocks monthly prices
-start = dt.datetime.today() - dt.timedelta(3650)
-end = dt.datetime.today()
-
-for ticker in dji_2018_tickers:
-    
-    ohlc_mon = yf.download(ticker, start, end, interval = '1mo')
-    ohlc_mon[ticker].dropna(inplace = True, how = 'all')
-    
-dji_2018_tickers = ohlc_mon.keys() # keeping only those tickers for which there was no error
-
-# Calculate returns for each stock and save in seperate dataFrame
-
-return_df = pd.DataFrame()
-
-for ticker in dji_2018_tickers:
-    ohlc_mon[ticker]["monthly_return"] = ohlc_mon[ticker]["Adj Close"].pct_change()
-    return_df[ticker] = ohlc_mon[ticker]["monthly_return"]
-    
-return_df.dropna(inplace = True)
+return_df = returns_calc(dji_2018_tickers)
 
 """
 Run and calculate strategy KPI's
 """
-portfolio_returns = pfRebalance(return_df, 6, 3)
+# Strategy 1 Portfolio Rebalance
+portfolio_returns = pfRebalance(return_df, max_size = 15, rebalance = 7)
 
 print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
 
 print(sharpe(portfolio_returns, custom_risk_free_rate = False, period = "monthly", column = "monthly_return", calculate_return = False))
 
-print(cagr(portfolio_returns, period = "monthly", column = "monthly_return", calculate_return = False))
+print(maxDraw(portfolio_returns, column = "monthly_return", calculate_return = False))
 
-
-
+# Strategy 2
 
 
 

@@ -52,7 +52,7 @@ def pfRebalance(DF: pd.DataFrame, max_size: int = 6, rebalance: int = 3) -> pd.D
     
     portfolio = []
     
-    monthly_ret = [0]
+    monthly_ret = []
     
     for i in range(len(df)): 
         """ 
@@ -61,7 +61,7 @@ def pfRebalance(DF: pd.DataFrame, max_size: int = 6, rebalance: int = 3) -> pd.D
         rebalancing each month.
         """
         
-        if portfolio: # if portfolio is not empty
+        if len(portfolio)>0: # if portfolio is not empty
             
             # Calculate the mean of return of portfolio for each ticker in portfolio
             monthly_ret.append(df[portfolio].iloc[i,:].mean())

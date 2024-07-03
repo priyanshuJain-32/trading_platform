@@ -47,4 +47,4 @@ def calmar(DF: pd.DataFrame, period: str = "monthly", column: str = "Adj Close",
     
     df = DF.copy()
     
-    return cagr(df, period = period, column = column, calculate_return = calculate_return) / maxDraw(df, period = period, column = column, calculate_return = calculate_return)
+    return cagr(df, period = period, column = column, calculate_return = calculate_return) / maxDraw(df, column = column, calculate_return = calculate_return)
