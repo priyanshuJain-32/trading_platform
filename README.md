@@ -31,3 +31,8 @@ This section is under development and I keep adding as I learn.
 2. **Resistance Breakout:** In Progress.
 3. **Renko and OBV:** To be implemented.
 4. **Renko and MACD:** To be implemented.
+
+### Miscellaneous
+1. **Time-periods Map:** Now you can directly import and use time-periods.
+2. **Returns Calculator:** Use this function to supply a ticker and get monthly returns back as a data frame.
+3. **Risk-Free Return:** Now risk-free returns can be downloaded using this function to use in calculations.
